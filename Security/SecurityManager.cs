@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
 using OHD.Data;
 using OHD.Models;
 using System;
@@ -11,9 +12,9 @@ using System.Threading.Tasks;
 
 namespace OHD.Security
 {
-    public class SecurityManager
+    public class SecurityManager : Controller
     {
-        public ApplicationDbContext _context { get; }
+        private readonly ApplicationDbContext _context;
         public SecurityManager(ApplicationDbContext context)
         {
             _context = context;
@@ -40,7 +41,8 @@ namespace OHD.Security
         {
             var claims = new List<Claim>();
             claims.Add(new Claim(ClaimTypes.Name, account.Username));
-            claims.Add(new Claim(ClaimTypes.Role, account.Role.Name));
+            //var role = _context.Role.SingleOrDefault(r => r.Id == account.RoleId);
+            claims.Add(new Claim(ClaimTypes.Role, "HeadOffice")); // hard code
             return claims;
         }
     }

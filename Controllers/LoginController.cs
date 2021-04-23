@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using OHD.Data;
 using OHD.Models;
 using OHD.Security;
@@ -9,6 +10,7 @@ using System.Threading.Tasks;
 
 namespace OHD.Controllers
 {
+    //[Authorize(Roles = "Student")]
     [Route("login")]
     public class LoginController : Controller
     {
@@ -43,9 +45,23 @@ namespace OHD.Controllers
             }            
         }
 
+        [Route("SignOut")]
+        public IActionResult SingOut()
+        {
+            var securityManager = new SecurityManager();
+            securityManager.SignOut(HttpContext);
+            return RedirectToAction("Index");
+        }
+
+        [Route("AccessDenied")]
+        public IActionResult AccessDenied()
+        {
+            return RedirectToAction("AccessDenied");
+        }
+
         private Account Check(string username, string password)
         {
-            var account = _context.Account.SingleOrDefault(account => account.Username.Equals(User));
+            var account = _context.Account.SingleOrDefault(account => account.Username.Equals(username));
 
             if (account != null)
             {
