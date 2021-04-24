@@ -1,9 +1,10 @@
-﻿@{
-    ViewData["Title"] = "Account Profile";
+﻿
+@{
+    ViewData["Title"] = "Index";
     Layout = "~/Views/Shared/_MainLayout.cshtml";
 }
 
-@model OHD.Models.Account
+@model OHD.Models.Request
 <section class="content-header">
     <div class="container-fluid">
         <div class="row mb-2">
@@ -13,7 +14,7 @@
             <div class="col-md-12">
                 <ol class="breadcrumb float-sm-right">
                     <li class="breadcrumb-item"><a asp-controller="dashboard" asp-action="index">Home</a></li>
-                    <li class="breadcrumb-item active">List Account</li>
+                    <li class="breadcrumb-item active">List Request</li>
                 </ol>
             </div>
         </div>
@@ -40,7 +41,7 @@
                 }
                 <div class="card">
                     <div class="card-header">
-                        <h3 class="card-title">List Account</h3>
+                        <h3 class="card-title">List Request</h3>
                     </div>
                     <!-- /.card-header -->
                     <div class="card-body">
@@ -48,38 +49,44 @@
                             <thead>
                                 <tr>
                                     <th>Id</th>
-                                    <th>Username</th>
-                                    <th>Full Name</th>
-                                    <th>Role</th>
+                                    <th>Requestor</th>
+                                    <th>Facility</th>
+                                    <th>RequestDate</th>
+                                    <th>Assignee</th>
                                     <th>Status</th>
+                                    <th>Remarks</th>
                                     <th>Action</th>
                                 </tr>
                             </thead>
                             <tbody>
-                                @foreach (var a in ViewBag.accounts)
+                                @foreach (var a in ViewBag.requests)
                                 {
-                                    <tr>
-                                        <td>@a.Id</td>
-                                        <td>@a.Username</td>
-                                        <td>@a.FullName</td>
-                                        <td>@a.RoleName</td>
-                                        <td>@(a.Status == 0 ? "Active" : "Inactive")</td>
-                                        <td>
-                                            <a asp-controller="account" asp-action="edit" asp-route-id="@a.Id">Edit</a> |
-                                            <a asp-controller="account" asp-action="delete" asp-route-id="@a.Id"
-                                               onclick="return confirm('Are you sure?')">Delete</a>
-                                        </td>
-                                    </tr>
+                                <tr>
+                                    <td>@a.Id</td>
+                                    <td>@a.Requestor</td>
+                                    <td>@a.Facility</td>
+                                    <td>@a.RequestDate</td>
+                                    <td>@a.Assignee</td>
+                                    <td>@a.Status</td>
+                                    <td>@a.Remarks</td>
+                                    <td>
+                                        <a asp-controller="request" asp-action="edit" asp-route-id="@a.Id">Edit</a> |
+                                        <a asp-controller="request" asp-action="delete" asp-route-id="@a.Id"
+                                           onclick="return confirm('Are you sure?')">Delete</a>
+                                    </td>
+                                </tr>
 
                                 }
                             </tbody>
                             <tfoot>
                                 <tr>
                                     <th>Id</th>
-                                    <th>Username</th>
-                                    <th>Full Name</th>
-                                    <th>Role</th>
+                                    <th>Requestor</th>
+                                    <th>Facility</th>
+                                    <th>RequestDate</th>
+                                    <th>Assignee</th>
                                     <th>Status</th>
+                                    <th>Remarks</th>
                                     <th>Action</th>
                                 </tr>
                             </tfoot>

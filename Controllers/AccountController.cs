@@ -67,8 +67,7 @@ namespace OHD.Controllers
 
         [Authorize(Roles = "1")]
         [HttpPost]
-        [Route("add")]
-        [Route("")]
+        [Route("add")]        
         public IActionResult Add(AccountViewModel accountViewModel)
         {
             try
@@ -81,9 +80,66 @@ namespace OHD.Controllers
             }
             catch
             {
+                ViewBag.msg = "Failed";
                 return View("Add", accountViewModel);
             }
+        }
 
+        [Authorize(Roles = "1")]        
+        [Route("delete/{id}")]
+        public IActionResult Delete(int id)
+        {
+            try
+            {
+                var account = _context.Account.Find(id);
+                _context.Account.Remove(account);
+                _context.SaveChanges();
+                ViewBag.msg = "Done";
+            }
+            catch 
+            {
+                ViewBag.msg = "Failed";
+            }
+
+            return RedirectToAction("Index");
+        }
+
+        [Authorize(Roles = "1")]
+        [HttpGet]
+        [Route("edit/{id}")]        
+        public IActionResult Edit(int id)
+        {
+            var roles = _context.Role.Where(r => r.Id != 1).ToList();
+            var accountViewModel = new AccountViewModel
+            {
+                Account = _context.Account.Find(id),                
+                Roles = new SelectList(roles, "Id", "Name")                
+            };           
+            
+            return View("Edit", accountViewModel);
+        }
+
+        [Authorize(Roles = "1")]        
+        [Route("edit/{id}")]
+        public IActionResult Edit(int id, AccountViewModel accountViewModel)
+        {
+            try
+            {
+                var account = _context.Account.Find(id);
+                account.Username = accountViewModel.Account.Username;
+                //account.Password = BCrypt.Net.BCrypt.HashPassword(accountViewModel.Account.Password, BCrypt.Net.BCrypt.GenerateSalt());
+                account.RoleId = accountViewModel.Account.RoleId;
+                account.Status = accountViewModel.Account.Status;
+                _context.Account.Update(account);
+                _context.SaveChanges();
+
+                return RedirectToAction("Index");
+            }
+            catch
+            {
+                ViewBag.msg = "Failed";
+                return View("Edit", accountViewModel);
+            }            
         }
 
         [Authorize(Roles = "1, 2, 3")]

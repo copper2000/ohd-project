@@ -1,5 +1,5 @@
 ﻿@{
-    ViewData["Title"] = "Account Profile";
+    ViewData["Title"] = "Edit Account";
     Layout = "~/Views/Shared/_MainLayout.cshtml";
 }
 
@@ -9,12 +9,12 @@
     <div class="container-fluid">
         <div class="row mb-2">
             <div class="col-sm-6">
-                <h1>Add Account</h1>
+                <h1>Edit Account</h1>
             </div>
             <div class="col-md-12">
                 <ol class="breadcrumb float-sm-right">
                     <li class="breadcrumb-item"><a asp-controller="dashboard" asp-action="index">Home</a></li>
-                    <li class="breadcrumb-item active">Add Account</li>
+                    <li class="breadcrumb-item active">Edit Account</li>
                 </ol>
             </div>
         </div>
@@ -46,17 +46,17 @@
                 </div>
                 <!-- /.card-header -->
                 <!-- form start -->
-                <form asp-controller="account" asp-action="add" method="post">
+                <form asp-controller="account" asp-action="edit" method="post">
                     <div class="card-body">
                         <input type="hidden" name="id" asp-for="Account.Id" />
                         <div class="form-group">
                             <label for="username">Username</label>
                             <input asp-for="Account.Username" type="text" class="form-control" id="username" required="required">
                         </div>
-                        <div class="form-group">
+                        @*<div class="form-group">
                             <label for="password">Password</label>
                             <input asp-for="Account.Password" type="password" class="form-control" id="password" required="required">
-                        </div>
+                        </div>*@
                         <div class="form-group">
                             <label for="fullName">Full Name</label>
                             <input asp-for="Account.FullName" type="text" class="form-control" id="fullName" required="required">
@@ -68,8 +68,8 @@
                         </div>
 
                         <div class="form-check">
-                            <input type="checkbox" class="form-check-input" id="exampleCheck1">
-                            <label class="form-check-label" for="exampleCheck1" asp-for="Account.Status">Status</label>
+                            <input type="checkbox" class="form-check-input" value="1" name="status">
+                            <label class="form-check-label" for="exampleCheck1">Status</label>
                         </div>
 
                         <div class="form-group">
