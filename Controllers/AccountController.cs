@@ -8,10 +8,13 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Security.Claims;
+using OHD.Dto;
+using OHD.Models.ViewModels;
+using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace OHD.Controllers
 {
-    [Authorize(Roles = "HeadOffice")]
+    [Authorize(Roles = "1, 2, 3")]
     [Route("account")]
     public class AccountController : Controller
     {
@@ -21,17 +24,69 @@ namespace OHD.Controllers
             _context = context;
         }
 
-        [Authorize(Roles = "HeadOffice")]
+        [Authorize(Roles = "1")]
         [HttpGet]
         [Route("index")]
         [Route("")]
         public IActionResult Index()
         {
-            ViewBag.accounts = _context.Account.ToList();
+            ViewBag.accounts = from a in _context.Account
+                               join r in _context.Role
+                               on a.RoleId equals r.Id
+                               where a.RoleId != 1
+                               select new ListAccountResponse
+                               {
+                                   Id = a.Id,
+                                   Email = a.Email,
+                                   FullName = a.FullName,
+                                   Password = a.Password,
+                                   RoleId = a.RoleId,
+                                   RoleName = r.Name,
+                                   Status = a.Status,
+                                   Username = a.Username
+                               };
+
             return View("Index");
         }
 
-        [Authorize(Roles = "Student, Implementor, HeadOffice")]
+        [Authorize(Roles = "1")]
+        [HttpGet]
+        [Route("add")]
+        [Route("")]
+        public IActionResult Add()
+        {
+            var roles = _context.Role.Where(r => r.Id != 1).ToList();
+            var accountViewModel = new AccountViewModel
+            {
+                Account = new Account(),
+                Roles = new SelectList(roles, "Id", "Name")
+            };
+
+            return View("Add", accountViewModel);
+        }
+
+        [Authorize(Roles = "1")]
+        [HttpPost]
+        [Route("add")]
+        [Route("")]
+        public IActionResult Add(AccountViewModel accountViewModel)
+        {
+            try
+            {
+                var hashPassword = BCrypt.Net.BCrypt.HashPassword(accountViewModel.Account.Password, BCrypt.Net.BCrypt.GenerateSalt());
+                accountViewModel.Account.Password = hashPassword;
+                _context.Account.Add(accountViewModel.Account);
+                _context.SaveChanges();
+                return RedirectToAction("Index");
+            }
+            catch
+            {
+                return View("Add", accountViewModel);
+            }
+
+        }
+
+        [Authorize(Roles = "1, 2, 3")]
         [HttpGet]
         [Route("profile")]
         public IActionResult Profile()
@@ -41,7 +96,7 @@ namespace OHD.Controllers
             return View("Profile", account);
         }
 
-        [Authorize(Roles = "Student, Implementor, HeadOffice")]
+        [Authorize(Roles = "1, 2, 3")]
         [HttpPost]
         [Route("profile")]
         public IActionResult Profile(Account account)

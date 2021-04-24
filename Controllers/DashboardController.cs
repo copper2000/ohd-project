@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace OHD.Controllers
 {
-    [Authorize(Roles = "Student, HeadOffice, Implementor")]
+    [Authorize(Roles = "1, 2, 3")]
     [Route("Dashboard")]
     public class DashboardController : Controller
     {

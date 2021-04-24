@@ -40,9 +40,8 @@ namespace OHD.Security
         private IEnumerable<Claim> GetUserClaims(Account account)
         {
             var claims = new List<Claim>();
-            claims.Add(new Claim(ClaimTypes.Name, account.Username));
-            //var role = _context.Role.SingleOrDefault(r => r.Id == account.RoleId);
-            claims.Add(new Claim(ClaimTypes.Role, "HeadOffice")); // hard code
+            claims.Add(new Claim(ClaimTypes.Name, account.Username));            
+            claims.Add(new Claim(ClaimTypes.Role, account.RoleId.ToString()));
             return claims;
         }
     }
