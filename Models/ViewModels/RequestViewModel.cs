@@ -12,6 +12,8 @@ namespace OHD.Models.ViewModels
         public Request Request { get; set; }
         public SelectList Facilities { get; set; }
         public SelectList Statuses { get; set; }
+        public SelectList Severities { get; set; }
         public SelectList Accounts { get; set; }
+        
     }
 }

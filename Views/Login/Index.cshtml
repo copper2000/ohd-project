@@ -28,7 +28,7 @@
             <div class="card-body login-card-body">
                 <p class="login-box-msg">Sign in to start your session</p>
 
-                @ViewBag.error
+                <p style="color: red">@ViewBag.error</p> 
                 <form asp-controller="login" asp-action="process" method="post">
                     <div class="input-group mb-3">
                         <input type="text" name="username" class="form-control" placeholder="Username"

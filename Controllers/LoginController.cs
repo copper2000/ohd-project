@@ -55,7 +55,7 @@ namespace OHD.Controllers
         [Route("AccessDenied")]
         public IActionResult AccessDenied()
         {
-            return RedirectToAction("AccessDenied");
+            return View("AccessDenied");
         }
 
         private Account Check(string username, string password)

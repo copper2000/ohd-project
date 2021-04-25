@@ -14,6 +14,7 @@ namespace OHD.Models
         public DateTime? RequestDate { get; set; } = DateTime.Now;
         public int? Assignee { get; set; } = 0;
         public int? Status { get; set; } = 0;
+        public int? Severity { get; set; } = 0;
         public string? Remarks { get; set; } = "";
     }
 }

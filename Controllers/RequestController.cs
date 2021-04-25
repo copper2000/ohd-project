@@ -31,6 +31,8 @@ namespace OHD.Controllers
         [Route("index")]        
         public ActionResult Index()
         {
+            var username = User.FindFirst(ClaimTypes.Name);
+            var requestorId = _context.Account.SingleOrDefault(c => c.Username.Equals(username.Value)).Id;
             ViewBag.requests = from r in _context.Request
                                join f in _context.Facility
                                on r.Facility equals f.Id
@@ -38,6 +40,9 @@ namespace OHD.Controllers
                                on r.Assignee equals a.Id
                                join s in _context.Status
                                on r.Status equals s.Id
+                               join se in _context.Severity
+                               on r.Severity equals se.Id
+                               where r.Requestor == requestorId
                                select new ListRequestResponse
                                {
                                    Id = r.Id,
@@ -46,6 +51,7 @@ namespace OHD.Controllers
                                    RequestDate = r.RequestDate,
                                    Assignee = a.Username,
                                    Status = s.Description,
+                                   Severity = se.Description,
                                    Remarks = r.Remarks
                                };
             return View("Index");
@@ -57,13 +63,15 @@ namespace OHD.Controllers
         public ActionResult Add()
         {
             var facility = _context.Facility.ToList();
-            var assignee = _context.Account.ToList();
+            var assignee = _context.Account.Where(a => a.RoleId != 1 && a.RoleId != 2).ToList();
             var status = _context.Status.ToList();
+            var severity = _context.Severity.ToList();
             var requestViewModel = new RequestViewModel
             {
                 Accounts = new SelectList(assignee, "Id", "Username"),
                 Facilities = new SelectList(facility, "Id", "Name"),
-                Statuses = new SelectList(status, "Id", "Description")
+                Statuses = new SelectList(status, "Id", "Description"),
+                Severities = new SelectList(severity, "Id", "Description")
             };
             return View("Add", requestViewModel);
         }
@@ -115,14 +123,16 @@ namespace OHD.Controllers
         public IActionResult Edit(int id)
         {
             var facility = _context.Facility.ToList();
-            var assignee = _context.Account.ToList();
+            var assignee = _context.Account.Where(a => a.RoleId != 1 && a.RoleId != 2).ToList();
             var status = _context.Status.ToList();
+            var severity = _context.Severity.ToList();
             var requestViewModel = new RequestViewModel
             {
                 Request = _context.Request.Find(id),
                 Accounts = new SelectList(assignee, "Id", "Username"),
                 Facilities = new SelectList(facility, "Id", "Name"),
-                Statuses = new SelectList(status, "Id", "Description")
+                Statuses = new SelectList(status, "Id", "Description"),
+                Severities = new SelectList(severity, "Id", "Description")
             };
             return View("Edit", requestViewModel);            
         }
