@@ -64,13 +64,13 @@ namespace OHD.Controllers
         {
             var facility = _context.Facility.ToList();
             var assignee = _context.Account.Where(a => a.RoleId != 1 && a.RoleId != 2).ToList();
-            var status = _context.Status.ToList();
+            //var status = _context.Status.ToList();
             var severity = _context.Severity.ToList();
             var requestViewModel = new RequestViewModel
             {
                 Accounts = new SelectList(assignee, "Id", "Username"),
                 Facilities = new SelectList(facility, "Id", "Name"),
-                Statuses = new SelectList(status, "Id", "Description"),
+                //Statuses = new SelectList(status, "Id", "Description"),
                 Severities = new SelectList(severity, "Id", "Description")
             };
             return View("Add", requestViewModel);
@@ -87,6 +87,7 @@ namespace OHD.Controllers
                 var username = User.FindFirst(ClaimTypes.Name);
                 var requestorId = _context.Account.SingleOrDefault(c => c.Username.Equals(username.Value)).Id;
                 requestViewModel.Request.Requestor = requestorId;
+                requestViewModel.Request.Status = 1;
                 _context.Request.AddAsync(requestViewModel.Request);
                 _context.SaveChanges();
                 return RedirectToAction("Index");
@@ -124,14 +125,14 @@ namespace OHD.Controllers
         {
             var facility = _context.Facility.ToList();
             var assignee = _context.Account.Where(a => a.RoleId != 1 && a.RoleId != 2).ToList();
-            var status = _context.Status.ToList();
+            //var status = _context.Status.ToList();
             var severity = _context.Severity.ToList();
             var requestViewModel = new RequestViewModel
             {
                 Request = _context.Request.Find(id),
                 Accounts = new SelectList(assignee, "Id", "Username"),
                 Facilities = new SelectList(facility, "Id", "Name"),
-                Statuses = new SelectList(status, "Id", "Description"),
+                //Statuses = new SelectList(status, "Id", "Description"),
                 Severities = new SelectList(severity, "Id", "Description")
             };
             return View("Edit", requestViewModel);            
@@ -148,7 +149,7 @@ namespace OHD.Controllers
                 request.Facility = requestViewModel.Request.Facility;
                 request.RequestDate = requestViewModel.Request.RequestDate;
                 request.Assignee = requestViewModel.Request.Assignee;
-                request.Status = requestViewModel.Request.Status;
+                //request.Status = requestViewModel.Request.Status;
                 request.Remarks = requestViewModel.Request.Remarks;
                 
                 _context.Request.Update(request);
