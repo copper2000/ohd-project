@@ -14,6 +14,7 @@ namespace OHD.Models.ViewModels
         //public SelectList Statuses { get; set; }
         public SelectList Severities { get; set; }
         public SelectList Accounts { get; set; }
+        public SelectList Reasons { get; set; }
         
     }
 }

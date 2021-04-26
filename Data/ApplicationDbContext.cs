@@ -18,6 +18,7 @@ namespace OHD.Data
         public DbSet<Message> Message { get; set; }
         public DbSet<Reason> Reason { get; set; }
         public DbSet<Request> Request { get; set; }
+        public DbSet<HistoryRequest> HistoryRequest { get; set; }
         public DbSet<Severity> Severity { get; set; }
         public DbSet<Status> Status { get; set; }
         public DbSet<Account> Account { get; set; }

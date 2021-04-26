@@ -1,0 +1,106 @@
+﻿
+@{
+    ViewData["Title"] = "HistoryRequest";
+    Layout = "~/Views/Shared/_MainLayout.cshtml";
+}
+
+<section class="content-header">
+    <div class="container-fluid">
+        <div class="row mb-2">
+            <div class="col-sm-6">
+                <h1>History Requests</h1>
+            </div>
+            <div class="col-md-12">
+                <ol class="breadcrumb float-sm-right">
+                    <li class="breadcrumb-item"><a asp-controller="dashboard" asp-action="index">Home</a></li>
+                    <li class="breadcrumb-item active">History Requests</li>
+                </ol>
+            </div>
+        </div>
+    </div><!-- /.container-fluid -->
+</section>
+<section class="content">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-12">
+                @if (ViewBag.msg != null)
+                {
+                    if (ViewBag.msg == "Done")
+                    {
+                        <div class="callout callout-success">
+                            <h4>Successful</h4>
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="callout callout-danger">
+                            <h4>Failed</h4>
+                        </div>
+                    }
+                }
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title">List History Requests</h3>
+                    </div>
+                    <!-- /.card-header -->
+                    <div class="card-body">
+                        <table id="example2" class="table table-bordered table-hover">
+                            <thead>
+                                <tr>
+                                    <th>Id</th>
+                                    <th>Requestor</th>
+                                    <th>Facility</th>
+                                    <th>RequestDate</th>
+                                    <th>Assignee</th>
+                                    <th>Status</th>
+                                    <th>Severity</th>
+                                    <th>Remarks</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var a in ViewBag.requests)
+                                {
+                                    <tr>
+                                        <td>@a.Id</td>
+                                        <td>@a.Requestor</td>
+                                        <td>@a.Facility</td>
+                                        <td>@a.RequestDate</td>
+                                        <td>@a.Assignee</td>
+                                        <td>@a.Status</td>
+                                        <td>@a.Severity</td>
+                                        <td>@a.Remarks</td>
+                                        <td>
+                                            Read only
+                                        </td>
+                                    </tr>
+
+                                }
+                            </tbody>
+                            <tfoot>
+                                <tr>
+                                    <th>Id</th>
+                                    <th>Requestor</th>
+                                    <th>Facility</th>
+                                    <th>RequestDate</th>
+                                    <th>Assignee</th>
+                                    <th>Status</th>
+                                    <th>Severity</th>
+                                    <th>Remarks</th>
+                                    <th>Action</th>
+                                </tr>
+                            </tfoot>
+                        </table>
+                    </div>
+                    <!-- /.card-body -->
+                </div>
+                <!-- /.card -->
+                <!-- /.card -->
+            </div>
+            <!-- /.col -->
+        </div>
+        <!-- /.row -->
+    </div>
+    <!-- /.container-fluid -->
+</section>
+
