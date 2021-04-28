@@ -48,7 +48,7 @@ namespace OHD.Controllers
                                    Requestor = _context.Account.FirstOrDefault(a => a.Id == r.Requestor).FullName,
                                    Facility = f.Name,
                                    RequestDate = r.RequestDate,
-                                   Assignee = a.Username,
+                                   Assignee = a.FullName,
                                    Status = s.Description,
                                    Severity = se.Description,
                                    Remarks = r.Remarks
@@ -79,7 +79,7 @@ namespace OHD.Controllers
                                    Requestor = _context.Account.FirstOrDefault(a => a.Id == r.Requestor).FullName,
                                    Facility = f.Name,
                                    RequestDate = r.RequestDate,
-                                   Assignee = a.Username,
+                                   Assignee = a.FullName,
                                    Status = s.Description,
                                    Severity = se.Description,
                                    Remarks = r.Remarks
@@ -175,12 +175,11 @@ namespace OHD.Controllers
         {
             try
             {
-                var request = _context.Request.Find(id);
-                //request.Requestor = requestViewModel.Request.Requestor;
+                var request = _context.Request.Find(id);                
                 request.Facility = requestViewModel.Request.Facility;
                 request.RequestDate = requestViewModel.Request.RequestDate;
-                requestViewModel.Request.Assignee = 1; // head_office_id -> add to constant later
-                //request.Status = requestViewModel.Request.Status;
+                request.Severity = requestViewModel.Request.Severity;
+                request.Assignee = 1; // head_office_id -> add to constant later                
                 request.Remarks = requestViewModel.Request.Remarks;
                 
                 _context.Request.Update(request);

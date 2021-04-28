@@ -99,13 +99,19 @@
                                     <li class="nav-item">
                                         <a asp-controller="HeadOffice" asp-action="index" class="nav-link">
                                             <i class="far fa-circle nav-icon"></i>
-                                            <p>List</p>
+                                            <p>List Incoming Request</p>
                                         </a>
                                     </li>
                                     <li class="nav-item">
-                                        <a @*asp-controller="HeadOffice" asp-action="add" *@class="nav-link">
+                                        <a asp-controller="account" asp-action="index" class="nav-link">
                                             <i class="far fa-circle nav-icon"></i>
-                                            <p>Add</p>
+                                            <p>List Account</p>
+                                        </a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a asp-controller="account" asp-action="add" class="nav-link">
+                                            <i class="far fa-circle nav-icon"></i>
+                                            <p>Create Account</p>
                                         </a>
                                     </li>
                                 </ul>
@@ -143,6 +149,28 @@
                                             <p>Add</p>
                                         </a>
                                     </li>
+                                </ul>
+                            </li>
+                        }
+
+                        @*Implementer is assigned*@
+                        @if (User.Identity.IsAuthenticated && User.IsInRole("3"))
+                        {
+                            <li class="nav-item menu-open">
+                                <a href="#" class="nav-link active">
+                                    <i class="nav-icon fas fa-tachometer-alt"></i>
+                                    <p>
+                                        Request
+                                        <i class="right fas fa-angle-left"></i>
+                                    </p>
+                                </a>
+                                <ul class="nav nav-treeview">
+                                    <li class="nav-item">
+                                        <a asp-controller="implementer" asp-action="index" class="nav-link">
+                                            <i class="far fa-circle nav-icon"></i>
+                                            <p>List Assigned Request</p>
+                                        </a>
+                                    </li>                                   
                                 </ul>
                             </li>
                         }

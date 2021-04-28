@@ -127,6 +127,7 @@ namespace OHD.Controllers
             {
                 var account = _context.Account.Find(id);
                 account.Username = accountViewModel.Account.Username;
+                account.FullName = accountViewModel.Account.FullName;
                 //account.Password = BCrypt.Net.BCrypt.HashPassword(accountViewModel.Account.Password, BCrypt.Net.BCrypt.GenerateSalt());
                 account.RoleId = accountViewModel.Account.RoleId;
                 account.Status = accountViewModel.Account.Status;
