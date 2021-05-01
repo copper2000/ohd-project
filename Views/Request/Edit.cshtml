@@ -54,23 +54,7 @@
                             <label for="facility">Facility</label>
                             <select class="form-control" asp-for="Request.Facility" asp-items="@Model.Facilities">
                             </select>
-                        </div>
-                        <div class="form-group">
-                            <label for="fullName">Request Date</label>
-                            <input class="form-control" type="datetime-local" asp-for="Request.RequestDate" />
-                        </div>
-
-                        @*<div class="form-group">
-                <label for="email">Assignee</label>
-                <select class="form-control" asp-for="Request.Assignee" asp-items="@Model.Accounts">
-                </select>
-            </div>*@
-
-                        @*<div class="form-group">
-                <label>Status</label>
-                <select class="form-control" asp-for="Request.Status" asp-items="@Model.Statuses">
-                </select>
-            </div>*@
+                        </div>                                               
 
                         <div class="form-group">
                             <label>Severity</label>
@@ -86,7 +70,7 @@
 
                     <div class="card-footer">
                         <button type="submit" class="btn btn-primary">Save</button>
-                        <a asp-controller="request" asp-action="close-request" asp-route-id="Request.Id" class="btn btn-danger" type="button">
+                        <a asp-controller="request" asp-action="close-request" asp-route-id="@Model.Request.Id" class="btn btn-danger" type="button">
                             Close Request
                         </a>
                     </div>                   

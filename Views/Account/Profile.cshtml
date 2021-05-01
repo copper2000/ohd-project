@@ -5,6 +5,21 @@
 
 @model OHD.Models.Account
 <section class="content-header">
+    @if (ViewBag.msg != null)
+    {
+        if (ViewBag.msg == "Done")
+        {
+            <div class="callout callout-success">
+                <h4>Successful</h4>
+            </div>
+        }
+        else
+        {
+            <div class="callout callout-danger">
+                <h4>Failed</h4>
+            </div>
+        }
+    }
     <div class="container-fluid">
         <div class="row mb-2">
             <div class="col-sm-6">
@@ -35,7 +50,7 @@
                         <input type="hidden" name="id" asp-for="Id" />
                         <div class="form-group">
                             <label for="username">Username</label>
-                            <input asp-for="Username" type="text" class="form-control" id="username" required="required">
+                            <input asp-for="Username" type="text" class="form-control" id="username" required="required" disabled="disabled">
                         </div>
                         <div class="form-group">
                             <label for="password">Password</label>

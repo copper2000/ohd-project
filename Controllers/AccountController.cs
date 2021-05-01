@@ -2,15 +2,12 @@
 using Microsoft.AspNetCore.Mvc;
 using OHD.Data;
 using OHD.Models;
-using OHD.Security;
 using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 using System.Security.Claims;
-using OHD.Dto;
 using OHD.Models.ViewModels;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using OHD.Interface;
 
 namespace OHD.Controllers
 {
@@ -18,10 +15,12 @@ namespace OHD.Controllers
     [Route("account")]
     public class AccountController : Controller
     {
-        public ApplicationDbContext _context { get; }
-        public AccountController(ApplicationDbContext context)
+        private readonly IAccount _accountService;
+        private readonly ApplicationDbContext _context;
+        public AccountController(ApplicationDbContext context, IAccount account)
         {
             _context = context;
+            _accountService = account;
         }
 
         [Authorize(Roles = "1")]
@@ -30,21 +29,7 @@ namespace OHD.Controllers
         [Route("")]
         public IActionResult Index()
         {
-            ViewBag.accounts = from a in _context.Account
-                               join r in _context.Role
-                               on a.RoleId equals r.Id
-                               where a.RoleId != 1
-                               select new ListAccountResponse
-                               {
-                                   Id = a.Id,
-                                   Email = a.Email,
-                                   FullName = a.FullName,
-                                   Password = a.Password,
-                                   RoleId = a.RoleId,
-                                   RoleName = r.Name,
-                                   Status = a.Status,
-                                   Username = a.Username
-                               };
+            ViewBag.accounts = _accountService.GetListAccount();
 
             return View("Index");
         }
@@ -67,16 +52,22 @@ namespace OHD.Controllers
 
         [Authorize(Roles = "1")]
         [HttpPost]
-        [Route("add")]        
+        [Route("add")]
         public IActionResult Add(AccountViewModel accountViewModel)
         {
             try
             {
-                var hashPassword = BCrypt.Net.BCrypt.HashPassword(accountViewModel.Account.Password, BCrypt.Net.BCrypt.GenerateSalt());
-                accountViewModel.Account.Password = hashPassword;
-                _context.Account.Add(accountViewModel.Account);
-                _context.SaveChanges();
-                return RedirectToAction("Index");
+                var result = _accountService.AddAccount(accountViewModel);
+                if (result != null)
+                {
+                    ViewBag.msg = "Done";
+                    return RedirectToAction("Index");
+                }
+                else
+                {
+                    ViewBag.msg = "Failed";
+                    return View("Add", accountViewModel);
+                }
             }
             catch
             {
@@ -85,18 +76,24 @@ namespace OHD.Controllers
             }
         }
 
-        [Authorize(Roles = "1")]        
+        [Authorize(Roles = "1")]
         [Route("delete/{id}")]
         public IActionResult Delete(int id)
         {
             try
             {
-                var account = _context.Account.Find(id);
-                _context.Account.Remove(account);
-                _context.SaveChanges();
-                ViewBag.msg = "Done";
+                var result = _accountService.DeleteAccount(id);
+                if (result)
+                {
+                    ViewBag.msg = "Done";
+                    return RedirectToAction("Index");
+                }
+                else
+                {
+                    ViewBag.msg = "Failed";
+                }             
             }
-            catch 
+            catch
             {
                 ViewBag.msg = "Failed";
             }
@@ -106,41 +103,42 @@ namespace OHD.Controllers
 
         [Authorize(Roles = "1")]
         [HttpGet]
-        [Route("edit/{id}")]        
+        [Route("edit/{id}")]
         public IActionResult Edit(int id)
         {
             var roles = _context.Role.Where(r => r.Id != 1).ToList();
             var accountViewModel = new AccountViewModel
             {
-                Account = _context.Account.Find(id),                
-                Roles = new SelectList(roles, "Id", "Name")                
-            };           
-            
+                Account = _context.Account.Find(id),
+                Roles = new SelectList(roles, "Id", "Name")
+            };
+
             return View("Edit", accountViewModel);
         }
 
-        [Authorize(Roles = "1")]        
+        [Authorize(Roles = "1")]
         [Route("edit/{id}")]
         public IActionResult Edit(int id, AccountViewModel accountViewModel)
         {
             try
             {
-                var account = _context.Account.Find(id);
-                account.Username = accountViewModel.Account.Username;
-                account.FullName = accountViewModel.Account.FullName;
-                //account.Password = BCrypt.Net.BCrypt.HashPassword(accountViewModel.Account.Password, BCrypt.Net.BCrypt.GenerateSalt());
-                account.RoleId = accountViewModel.Account.RoleId;
-                account.Status = accountViewModel.Account.Status;
-                _context.Account.Update(account);
-                _context.SaveChanges();
-
-                return RedirectToAction("Index");
+                var result = _accountService.EditAccount(id, accountViewModel);
+                if (result != null)
+                {
+                    ViewBag.msg = "Done";
+                    return RedirectToAction("Index");
+                }
+                else
+                {
+                    ViewBag.msg = "Failed";
+                    return View("Edit", accountViewModel);
+                }             
             }
             catch
             {
                 ViewBag.msg = "Failed";
                 return View("Edit", accountViewModel);
-            }            
+            }
         }
 
         [Authorize(Roles = "1, 2, 3")]
@@ -149,7 +147,8 @@ namespace OHD.Controllers
         public IActionResult Profile()
         {
             var username = User.FindFirst(ClaimTypes.Name);
-            var account = _context.Account.SingleOrDefault(c => c.Username.Equals(username));
+            var userId = _context.Account.SingleOrDefault(c => c.Username.Equals(username.Value)).Id;
+            var account = _context.Account.SingleOrDefault(c => c.Id == userId);
             return View("Profile", account);
         }
 
@@ -161,22 +160,22 @@ namespace OHD.Controllers
             try
             {
                 var username = User.FindFirst(ClaimTypes.Name);
-                var currentAccount = _context.Account.SingleOrDefault(c => c.Username.Equals(account.Username));
-                currentAccount.Username = account.Username;
-                currentAccount.Password = account.Password;
-                if (!string.IsNullOrEmpty(account.Password))
-                {
-                    currentAccount.Password = BCrypt.Net.BCrypt
-                        .HashPassword(account.Password, BCrypt.Net.BCrypt.GenerateSalt());
-                }
-                currentAccount.FullName = account.FullName;
-                currentAccount.Email = account.Email;
-                _context.SaveChanges();
 
-                return View("Profile", currentAccount);
+                var result = _accountService.EditProfile(username, account);
+                if (result != null)
+                {
+                    ViewBag.msg = "Done";
+                    return RedirectToAction("Index", "Dashboard");
+                }
+                else
+                {
+                    ViewBag.msg = "Failed";
+                    return View("Profile", result);
+                }                                
             }
             catch (Exception ex)
             {
+                ViewBag.msg = "Failed";
                 throw ex;
             }
         }

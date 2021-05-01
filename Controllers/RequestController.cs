@@ -2,11 +2,8 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using OHD.Data;
-using OHD.Dto;
 using OHD.Interface;
-using OHD.Models;
 using OHD.Models.ViewModels;
-using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
 
@@ -27,32 +24,13 @@ namespace OHD.Controllers
 
         [Authorize(Roles = "2")]
         [HttpGet]
-        [Route("index")]        
-        public ActionResult Index() // current request status
+        [Route("index")]
+        public ActionResult Index()
         {
             var username = User.FindFirst(ClaimTypes.Name);
             var requestorId = _context.Account.SingleOrDefault(c => c.Username.Equals(username.Value)).Id;
-            ViewBag.requests = from r in _context.Request
-                               join f in _context.Facility
-                               on r.Facility equals f.Id
-                               join a in _context.Account
-                               on r.Assignee equals a.Id
-                               join s in _context.Status
-                               on r.Status equals s.Id
-                               join se in _context.Severity
-                               on r.Severity equals se.Id
-                               where r.Requestor == requestorId && s.Id != 4
-                               select new ListRequestResponse
-                               {
-                                   Id = r.Id,
-                                   Requestor = _context.Account.FirstOrDefault(a => a.Id == r.Requestor).FullName,
-                                   Facility = f.Name,
-                                   RequestDate = r.RequestDate,
-                                   Assignee = a.FullName,
-                                   Status = s.Description,
-                                   Severity = se.Description,
-                                   Remarks = r.Remarks
-                               };
+            ViewBag.requests = _request.GetListRequest(requestorId);
+
             return View("Index");
         }
 
@@ -63,49 +41,26 @@ namespace OHD.Controllers
         {
             var username = User.FindFirst(ClaimTypes.Name);
             var requestorId = _context.Account.SingleOrDefault(c => c.Username.Equals(username.Value)).Id;
-            ViewBag.requests = from r in _context.HistoryRequest
-                               join f in _context.Facility
-                               on r.Facility equals f.Id
-                               join a in _context.Account
-                               on r.Assignee equals a.Id
-                               join s in _context.Status
-                               on r.Status equals s.Id
-                               join se in _context.Severity
-                               on r.Severity equals se.Id
-                               where r.Requestor == requestorId && (s.Id == 3 || s.Id == 4)
-                               select new ListRequestResponse
-                               {
-                                   Id = r.Id,
-                                   Requestor = _context.Account.FirstOrDefault(a => a.Id == r.Requestor).FullName,
-                                   Facility = f.Name,
-                                   RequestDate = r.RequestDate,
-                                   Assignee = a.FullName,
-                                   Status = s.Description,
-                                   Severity = se.Description,
-                                   Remarks = r.Remarks
-                               };
+            ViewBag.requests = _request.GetListHistoryRequest(requestorId);
+
             return View("HistoryRequest");
         }
 
         [Authorize(Roles = "2")]
         [HttpGet]
-        [Route("addOrUpdate")]        
+        [Route("addOrUpdate")]
         public ActionResult Add()
         {
-            //var assignee = _context.Account.Where(a => a.RoleId != 1 && a.RoleId != 2).ToList();
-            //var status = _context.Status.ToList();
-            //Accounts = new SelectList(assignee, "Id", "Username"),
-            //Statuses = new SelectList(status, "Id", "Description"),
-            var facility = _context.Facility.ToList();            
+            var facility = _context.Facility.ToList();
             var severity = _context.Severity.ToList();
             var requestViewModel = new RequestViewModel
-            {                
-                Facilities = new SelectList(facility, "Id", "Name"),                
+            {
+                Facilities = new SelectList(facility, "Id", "Name"),
                 Severities = new SelectList(severity, "Id", "Description")
             };
             return View("Add", requestViewModel);
         }
-        
+
         [Authorize(Roles = "2")]
         [HttpPost]
         [Route("addOrUpdate")]
@@ -115,39 +70,25 @@ namespace OHD.Controllers
             {
                 var username = User.FindFirst(ClaimTypes.Name);
                 var requestorId = _context.Account.SingleOrDefault(c => c.Username.Equals(username.Value)).Id;
-                requestViewModel.Request.Requestor = requestorId;
-                requestViewModel.Request.Status = 1;
-                requestViewModel.Request.Assignee = 1; // head_office_id -> add to constant later
-                var createdRequest = _context.Request.Add(requestViewModel.Request);
-                if(createdRequest.Entity != null)
+
+                var result = _request.AddRequest(requestViewModel, requestorId);
+                if (result != null)
                 {
-                    _context.SaveChanges();
-                    var historyRequest = new HistoryRequest
-                    {
-                        Id = createdRequest.Entity.Id,
-                        Requestor = requestorId,
-                        Facility = (int)createdRequest.Entity.Facility,
-                        RequestDate = (System.DateTime)createdRequest.Entity.RequestDate,
-                        Assignee = (int)createdRequest.Entity.Assignee,
-                        Status = (int)createdRequest.Entity.Status,
-                        Severity = (int)createdRequest.Entity.Severity,
-                        Remarks = createdRequest.Entity.Remarks                  
-                    };
-                    _context.HistoryRequest.Add(historyRequest);
-                    _context.SaveChanges();
-                }                    
+                    ViewBag.msg = "Done";
+                    return RedirectToAction("Index");
+                }
                 else
                 {
-                    return null;
+                    ViewBag.msg = "Failed";
+                    return View("Add", requestViewModel);
                 }
-                
-                return RedirectToAction("Index");
             }
             catch
             {
+                ViewBag.msg = "Failed";
                 return View("Add", requestViewModel);
             }
-        }        
+        }
 
         [Authorize(Roles = "1, 2, 3")]
         [HttpGet]
@@ -155,37 +96,34 @@ namespace OHD.Controllers
         public IActionResult Edit(int id)
         {
             var facility = _context.Facility.ToList();
-            //var assignee = _context.Account.Where(a => a.RoleId != 1 && a.RoleId != 2).ToList();
-            //var status = _context.Status.ToList();
             var severity = _context.Severity.ToList();
             var requestViewModel = new RequestViewModel
             {
                 Request = _context.Request.Find(id),
-                //Accounts = new SelectList(assignee, "Id", "Username"),
                 Facilities = new SelectList(facility, "Id", "Name"),
-                //Statuses = new SelectList(status, "Id", "Description"),
                 Severities = new SelectList(severity, "Id", "Description")
             };
-            return View("Edit", requestViewModel);            
+            return View("Edit", requestViewModel);
         }
 
         [Authorize(Roles = "2")]
+        [HttpPost]
         [Route("edit/{id}")]
         public IActionResult Edit(int id, RequestViewModel requestViewModel)
         {
             try
             {
-                var request = _context.Request.Find(id);                
-                request.Facility = requestViewModel.Request.Facility;
-                request.RequestDate = requestViewModel.Request.RequestDate;
-                request.Severity = requestViewModel.Request.Severity;
-                request.Assignee = 1; // head_office_id -> add to constant later                
-                request.Remarks = requestViewModel.Request.Remarks;
-                
-                _context.Request.Update(request);
-                _context.SaveChanges();
-
-                return RedirectToAction("Index");
+                var result = _request.EditRequest(id, requestViewModel);
+                if (result != null)
+                {
+                    ViewBag.msg = "Done";
+                    return RedirectToAction("Index");
+                }
+                else
+                {
+                    ViewBag.msg = "Failed";
+                    return View("Edit", requestViewModel);
+                }
             }
             catch
             {
@@ -199,28 +137,37 @@ namespace OHD.Controllers
         public IActionResult CloseRequest(int id)
         {
 
-            var reason = _context.Reason.ToList();                        
+            var reason = _context.Reason.ToList();
             var requestViewModel = new RequestViewModel
             {
-                Request = _context.Request.Find(id),          
-                Reasons = new SelectList(reason, "Id", "Description"),              
+                Request = _context.Request.Find(id),
+                Reasons = new SelectList(reason, "Id", "Description"),
             };
+
             return View("CloseRequest", requestViewModel);
         }
 
         [Authorize(Roles = "2")]
-        [HttpGet]
-        [Route("close-request/{id}")]
+        [HttpPost]
+        [Route("close-request")]
         public IActionResult CloseRequest(int id, RequestViewModel requestViewModel)
         {
             try
             {
-                var request = _context.Request.Find(id);                               
-                requestViewModel.Request.Status = 4; // closed request        
-                _context.Request.Update(request);
-                _context.SaveChanges();
+                var username = User.FindFirst(ClaimTypes.Name);
+                var requestorId = _context.Account.SingleOrDefault(c => c.Username.Equals(username.Value)).Id;
 
-                return RedirectToAction("Index");
+                var result = _request.CloseRequest(id, requestorId, requestViewModel);
+                if (result)
+                {
+                    ViewBag.msg = "Done";
+                    return RedirectToAction("Index");
+                }
+                else
+                {
+                    ViewBag.msg = "Failed";
+                    return View("CloseRequest", requestViewModel);
+                }
             }
             catch
             {
@@ -236,10 +183,12 @@ namespace OHD.Controllers
         {
             try
             {
-                var request = _context.Request.Find(id);
-                _context.Request.Remove(request);
-                _context.SaveChanges();
-                ViewBag.msg = "Done";
+                var result = _request.DeleteRequest(id);
+                if (result)
+                {
+                    ViewBag.msg = "Done";
+                    return RedirectToAction("Index");
+                }
             }
             catch
             {

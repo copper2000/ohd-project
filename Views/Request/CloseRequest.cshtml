@@ -7,6 +7,21 @@
 @model OHD.Models.ViewModels.RequestViewModel
 
 <section class="content-header">
+    @if (ViewBag.msg != null)
+    {
+        if (ViewBag.msg == "Done")
+        {
+            <div class="callout callout-success">
+                <h4>Successful</h4>
+            </div>
+        }
+        else
+        {
+            <div class="callout callout-danger">
+                <h4>Failed</h4>
+            </div>
+        }
+    }
     <div class="container-fluid">
         <div class="row mb-2">
             <div class="col-sm-6">
@@ -47,15 +62,15 @@
                 </div>
                 <!-- /.card-header -->
                 <!-- form start -->
-                <form asp-controller="request" asp-action="close-request" method="get">
+                <form asp-controller="request" asp-action="close-request" method="post">
                     <div class="card-body">
-                        <input type="hidden" name="id" asp-for="Request.Id" />                        
+                        <input type="hidden" name="id" asp-for="Request.Id" />
                         <div class="form-group">
-                                <label for="email">Choose Appropriate Reason</label>
-                                <select class="form-control" asp-items="@Model.Reasons">
-                                </select>
-                            </div>
-                       
+                            <label for="email">Choose Appropriate Reason</label>
+                            <select class="form-control" asp-items="@Model.Reasons">
+                            </select>
+                        </div>
+
                     </div>
 
                     <div class="card-footer">

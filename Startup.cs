@@ -1,9 +1,7 @@
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Identity.UI;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -11,10 +9,6 @@ using Microsoft.Extensions.Hosting;
 using OHD.Data;
 using OHD.Interface;
 using OHD.Service;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace OHD
 {
@@ -38,6 +32,9 @@ namespace OHD
             services.AddControllersWithViews();
             services.AddRazorPages();
             services.AddScoped<IRequest, RequestService>();
+            services.AddScoped<IAccount, AccountService>();
+            services.AddScoped<IHeadOffice, HeadOfficeService>();
+            services.AddScoped<IImplementer, ImplementerService>();
 
             services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
                 .AddCookie(options =>

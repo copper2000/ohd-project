@@ -6,6 +6,21 @@
 @model OHD.Models.ViewModels.RequestViewModel
 
 <section class="content-header">
+    @if (ViewBag.msg != null)
+    {
+        if (ViewBag.msg == "Done")
+        {
+            <div class="callout callout-success">
+                <h4>Successful</h4>
+            </div>
+        }
+        else
+        {
+            <div class="callout callout-danger">
+                <h4>Failed</h4>
+            </div>
+        }
+    }
     <div class="container-fluid">
         <div class="row mb-2">
             <div class="col-sm-6">
@@ -53,11 +68,7 @@
                             <label for="facility">Facility</label>
                             <select class="form-control" asp-for="Request.Facility" asp-items="@Model.Facilities">
                             </select>
-                        </div>
-                        <div class="form-group">
-                            <label for="fullName">Request Date</label>
-                            <input class="form-control" type="datetime-local" asp-for="Request.RequestDate" />
-                        </div>
+                        </div>                       
 
                         @*<div class="form-group">
                             <label for="email">Assignee</label>

@@ -6,6 +6,21 @@
 @model OHD.Models.ViewModels.AccountViewModel
 
 <section class="content-header">
+    @if (ViewBag.msg != null)
+    {
+        if (ViewBag.msg == "Done")
+        {
+            <div class="callout callout-success">
+                <h4>Successful</h4>
+            </div>
+        }
+        else
+        {
+            <div class="callout callout-danger">
+                <h4>Failed</h4>
+            </div>
+        }
+    }
     <div class="container-fluid">
         <div class="row mb-2">
             <div class="col-sm-6">
