@@ -39,7 +39,8 @@ namespace OHD.Service
                                  Assignee = a.FullName,
                                  Status = s.Description,
                                  Severity = se.Description,
-                                 Remarks = r.Remarks
+                                 Remarks = r.Remarks,
+                                 Requirement = r.Requirement
                              };
 
             return lstRequest;
@@ -66,7 +67,8 @@ namespace OHD.Service
                                         Assignee = a.FullName,
                                         Status = s.Description,
                                         Severity = se.Description,
-                                        Remarks = r.Remarks
+                                        Remarks = r.Remarks,
+                                        Requirement = r.Requirement
                                     };
 
             return lstHistoryRequest;
@@ -77,7 +79,7 @@ namespace OHD.Service
             requestViewModel.Request.Requestor = requestorId;
             requestViewModel.Request.Status = StatusConstants.STATUS_UNASSIGNED;
             requestViewModel.Request.RequestDate = DateTime.Now;
-            requestViewModel.Request.Assignee = RoleConstants.ROLE_HEAD_OFFICE; // head_office_id -> add to constant later
+            requestViewModel.Request.Assignee = RoleConstants.ROLE_HEAD_OFFICE;
 
             var createdRequest = _context.Request.Add(requestViewModel.Request);
             if (createdRequest.Entity != null)
@@ -92,7 +94,8 @@ namespace OHD.Service
                     Assignee = (int)createdRequest.Entity.Assignee,
                     Status = (int)createdRequest.Entity.Status,
                     Severity = (int)createdRequest.Entity.Severity,
-                    Remarks = createdRequest.Entity.Remarks
+                    Remarks = createdRequest.Entity.Remarks,
+                    Requirement = createdRequest.Entity.Requirement
                 };
                 _context.HistoryRequest.Add(historyRequest);
                 _context.SaveChanges();
@@ -113,6 +116,7 @@ namespace OHD.Service
             request.Severity = requestViewModel.Request.Severity;
             request.Assignee = RoleConstants.ROLE_HEAD_OFFICE;
             request.Remarks = requestViewModel.Request.Remarks;
+            request.Requirement = requestViewModel.Request.Requirement;
 
             _context.Request.Update(request);
             _context.SaveChanges();

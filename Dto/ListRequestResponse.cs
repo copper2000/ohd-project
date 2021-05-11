@@ -15,6 +15,7 @@ namespace OHD.Dto
         public string Assignee { get; set; }
         public string Status { get; set; }
         public string Severity { get; set; }
+        public string Requirement { get; set; }
         public string Remarks { get; set; }
 
     }

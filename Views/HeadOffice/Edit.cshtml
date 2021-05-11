@@ -54,7 +54,7 @@
                             <label for="facility">Facility</label>
                             <select class="form-control" asp-for="Request.Facility" asp-items="@Model.Facilities">
                             </select>
-                        </div>                       
+                        </div>
 
                         <div class="form-group">
                             <label for="email">Assignee</label>
@@ -62,16 +62,15 @@
                             </select>
                         </div>
 
-                        @*<div class="form-group">
-                                <label>Status</label>
-                                <select class="form-control" asp-for="Request.Status" asp-items="@Model.Statuses">
-                                </select>
-                            </div>*@
-
                         <div class="form-group">
                             <label>Severity</label>
                             <select class="form-control" asp-for="Request.Severity" asp-items="@Model.Severities">
                             </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="fullName">Requirement Content</label>
+                            <textarea class="form-control" type="text" asp-for="Request.Requirement"></textarea>
                         </div>
 
                         <div class="form-group">

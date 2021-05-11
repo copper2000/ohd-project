@@ -52,7 +52,8 @@ namespace OHD.Service
                                          Assignee = a.FullName,
                                          Status = s.Description,
                                          Severity = se.Description,
-                                         Remarks = r.Remarks
+                                         Remarks = r.Remarks,
+                                         Requirement = r.Requirement
                                      };
 
             return lstIncomingRequest;

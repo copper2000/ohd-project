@@ -3,7 +3,7 @@
     Layout = "~/Views/Shared/_MainLayout.cshtml";
 }
 
-@model OHD.Models.Account
+@model OHD.Dto.ListAccountResponse
 <section class="content-header">
     @if (ViewBag.msg != null)
     {
@@ -60,7 +60,10 @@
                             <label for="fullName">Full Name</label>
                             <input asp-for="FullName" type="text" class="form-control" id="fullName" required="required">
                         </div>
-
+                        <div class="form-group">
+                            <label for="username">Role Name</label>
+                            <input asp-for="RoleName" type="text" class="form-control" id="username" required="required" disabled="disabled">
+                        </div>
                         <div class="form-group">
                             <label for="email">Email</label>
                             <input asp-for="Email" type="email" class="form-control" id="email" required="required">

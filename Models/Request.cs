@@ -17,5 +17,6 @@ namespace OHD.Models
         public int? Severity { get; set; } = 0;
         public string? Remarks { get; set; } = "";
         public int? ClosedBy { get; set; } = 0;
+        public string? Requirement { get; set; } = "";
     }
 }

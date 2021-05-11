@@ -12,5 +12,6 @@ namespace OHD.Models
         public int Status { get; set; } = 0;
         public int Severity { get; set; } = 0;
         public string Remarks { get; set; } = string.Empty;
+        public string Requirement { get; set; } = string.Empty;
     }
 }

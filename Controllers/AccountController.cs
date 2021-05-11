@@ -8,6 +8,7 @@ using System.Security.Claims;
 using OHD.Models.ViewModels;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using OHD.Interface;
+using OHD.Dto;
 
 namespace OHD.Controllers
 {
@@ -91,7 +92,7 @@ namespace OHD.Controllers
                 else
                 {
                     ViewBag.msg = "Failed";
-                }             
+                }
             }
             catch
             {
@@ -132,7 +133,7 @@ namespace OHD.Controllers
                 {
                     ViewBag.msg = "Failed";
                     return View("Edit", accountViewModel);
-                }             
+                }
             }
             catch
             {
@@ -149,7 +150,19 @@ namespace OHD.Controllers
             var username = User.FindFirst(ClaimTypes.Name);
             var userId = _context.Account.SingleOrDefault(c => c.Username.Equals(username.Value)).Id;
             var account = _context.Account.SingleOrDefault(c => c.Id == userId);
-            return View("Profile", account);
+            var roleName = _context.Role.FirstOrDefault(x => x.Id == account.RoleId)?.Name;
+
+            ListAccountResponse response = new ListAccountResponse
+            {
+               Username = account.Username,
+               Password = account.Password,
+               FullName = account.FullName,
+               Status = account.Status,
+               Email = account.Email,                
+               RoleName = roleName
+            };
+
+            return View("Profile", response);
         }
 
         [Authorize(Roles = "1, 2, 3")]
@@ -171,7 +184,7 @@ namespace OHD.Controllers
                 {
                     ViewBag.msg = "Failed";
                     return View("Profile", result);
-                }                                
+                }
             }
             catch (Exception ex)
             {

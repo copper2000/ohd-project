@@ -39,7 +39,8 @@ namespace OHD.Controllers
         public IActionResult Edit(int id)
         {
             var status = _context.Status.Where(s => s.Id != StatusConstants.STATUS_UNASSIGNED
-                                                 && s.Id != StatusConstants.STATUS_ASSIGNED).ToList();
+                                                 && s.Id != StatusConstants.STATUS_ASSIGNED && s.Id != StatusConstants.STATUS_CLOSED)
+                                        .ToList();
 
             var requestViewModel = new RequestViewModel
             {

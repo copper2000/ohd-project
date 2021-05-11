@@ -55,6 +55,7 @@
                                     <th>Assignee</th>
                                     <th>Status</th>
                                     <th>Severity</th>
+                                    <th>Requirement Content</th>
                                     <th>Remarks</th>
                                     <th>Action</th>
                                 </tr>
@@ -62,19 +63,20 @@
                             <tbody>
                                 @foreach (var a in ViewBag.requests)
                                 {
-                                    <tr>
-                                        <td>@a.Id</td>
-                                        <td>@a.Requestor</td>
-                                        <td>@a.Facility</td>
-                                        <td>@a.RequestDate</td>
-                                        <td>@a.Assignee</td>
-                                        <td>@a.Status</td>
-                                        <td>@a.Severity</td>
-                                        <td>@a.Remarks</td>
-                                        <td>
-                                            <a asp-controller="implementer" asp-action="edit" asp-route-id="@a.Id" class="btn btn-success">Update Status</a>
-                                        </td>
-                                    </tr>
+                                <tr>
+                                    <td>@a.Id</td>
+                                    <td>@a.Requestor</td>
+                                    <td>@a.Facility</td>
+                                    <td>@a.RequestDate</td>
+                                    <td>@a.Assignee</td>
+                                    <td>@a.Status</td>
+                                    <td>@a.Severity</td>
+                                    <td>@a.Requirement</td>
+                                    <td>@a.Remarks</td>
+                                    <td>
+                                        <a asp-controller="implementer" asp-action="edit" asp-route-id="@a.Id" class="btn btn-success">Update Status</a>
+                                    </td>
+                                </tr>
 
                                 }
                             </tbody>
@@ -87,6 +89,7 @@
                                     <th>Assignee</th>
                                     <th>Status</th>
                                     <th>Severity</th>
+                                    <th>Requirement Content</th>
                                     <th>Remarks</th>
                                     <th>Action</th>
                                 </tr>

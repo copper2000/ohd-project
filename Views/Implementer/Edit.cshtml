@@ -63,12 +63,16 @@
                 <!-- form start -->
                 <form asp-controller="implementer" asp-action="edit" method="post">
                     <div class="card-body">
-                        <input type="hidden" name="id" asp-for="Request.Id" />                        
+                        <input type="hidden" name="id" asp-for="Request.Id" />
                         <div class="form-group">
-                                <label>Status</label>
-                                <select class="form-control" asp-for="Request.Status" asp-items="@Model.Statuses">
-                                </select>
-                        </div>                       
+                            <label>Status</label>
+                            <select class="form-control" asp-for="Request.Status" asp-items="@Model.Statuses">
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="fullName">Requirement Content</label>
+                            <textarea class="form-control" type="text" asp-for="Request.Requirement" disabled="disabled"></textarea>
+                        </div>
                     </div>
                     <div class="card-footer">
                         <button type="submit" class="btn btn-primary">Save</button>                       
